@@ -127,12 +127,21 @@ public class Viewer extends JFrame{
 				// enable next button
 				NextButton.setEnabled(true);
 				// check for first picture
-				TempPhoto =	SavedPictures.Previous();
+				final Runnable UIthread = new Runnable(){
+					public void run(){
 				RefreshDisplay();
-				
 				//disable button?
 				PossiblyDisableButtons();
 				SerializeThisThing();
+				}
+				};
+				Runnable DBthread = new Runnable(){
+					public void run(){
+				TempPhoto =	SavedPictures.Previous();
+				SwingUtilities.invokeLater(UIthread);}
+				};
+				Thread SecondThread = new Thread(DBthread);
+				SecondThread.start();
 			}
 		});
 		
@@ -144,12 +153,22 @@ public class Viewer extends JFrame{
 				// enable previous button
 				PreviousButton.setEnabled(true);
 				// check for last picture
+				final Runnable UIthread = new Runnable(){
+					public void run(){
+						RefreshDisplay();
+						//disable button?
+						PossiblyDisableButtons();
+						SerializeThisThing();
+					}
+				};
+				Runnable DBthread = new Runnable(){
+					public void run(){
 				TempPhoto = SavedPictures.Next();
-				RefreshDisplay();
-				
-				//disable button?
-				PossiblyDisableButtons();
-				SerializeThisThing();
+				SwingUtilities.invokeLater(UIthread);
+					}
+				};
+				Thread SecondThread = new Thread(DBthread);
+				SecondThread.start();
 			}
 		});
 		JPanel rightdisplay = new JPanel();
@@ -158,9 +177,19 @@ public class Viewer extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				final Runnable UIthread = new Runnable(){
+					public void run(){
+						SerializeThisThing();
+						}
+				};
+				Runnable DBthread = new Runnable(){
+					public void run(){
 				SavedPictures.EditPhoto(DescriptionText.getText(), DateText.getText());
-				SerializeThisThing();
+				SwingUtilities.invokeLater(UIthread);
+					}
+				};
+				Thread SecondThread = new Thread(DBthread);
+				SecondThread.start();
 			}
 			
 		});
@@ -169,12 +198,22 @@ public class Viewer extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				final Runnable UIthread = new Runnable(){
+					public void run(){
+						RefreshDisplay();
+						//disable button?
+						PossiblyDisableButtons();
+						SerializeThisThing();
+					}
+				};
+				Runnable DBthread = new Runnable(){
+					public void run(){
 				SavedPictures.Deletecurrent();
 				TempPhoto = SavedPictures.Getcurrentphoto();
-				RefreshDisplay();
-				//disable button?
-				PossiblyDisableButtons();
-				SerializeThisThing();
+				SwingUtilities.invokeLater(UIthread);}
+				};
+				Thread SecondThread = new Thread(DBthread);
+				SecondThread.start();
 			}
 			
 		});
@@ -212,11 +251,22 @@ public class Viewer extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TempPhoto = SavedPictures.Getphoto(Integer.parseInt(CurrentPictureNumber.getText()));
-				RefreshDisplay();				
-				// disable buttons?
-				PossiblyDisableButtons();
-				SerializeThisThing();
+				final Runnable UIthread = new Runnable(){
+					public void run(){
+						RefreshDisplay();				
+						// disable buttons?
+						PossiblyDisableButtons();
+						SerializeThisThing();
+					}
+					};
+					Runnable DBthread = new Runnable(){
+						public void run(){
+							TempPhoto = SavedPictures.Getphoto(Integer.parseInt(CurrentPictureNumber.getText()));
+							SwingUtilities.invokeLater(UIthread);
+						}
+					};
+					Thread SecondThread = new Thread(DBthread);
+					SecondThread.start();
 			}
 			
 		});
