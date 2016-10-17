@@ -49,8 +49,10 @@ public class Model{
 				photonumber =num;
 			}
         }
+        // table is not present, make it
         catch (SQLException e){
-        	System.out.print(e);
+            String sqlCmd = "CREATE TABLE photo_album (photo LONG VARBINARY NULL, the_key int auto_increment, id int, description varchar(255), date varchar(24), PRIMARY KEY (the_key))";
+            stmt.executeUpdate(sqlCmd);
         }
     }
 	
